@@ -45,7 +45,6 @@ struct ContentView: View {
                 }
             }
         }
-        
         .navigationBarTitle("BetterRest")
         .navigationBarItems(trailing:
                                 Button(action: calculatedBedtime) {
@@ -62,15 +61,16 @@ struct ContentView: View {
         let components = Calendar.current.dateComponents([.hour, .minute], from: wakeUp)
         let hour = (components.hour ?? 0) * 60 * 60
         let minute = (components.minute ?? 0) * 60
-        let sleepTime = wakeUp - prediction.actualSleep
         
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        
-        alertMessage = formatter.string(from: sleepTime)
-        alertTitle = "Your ideal bedtime is…"
-                do {
+        do {
             let prediction = try model.prediction(wake: Double(hour + minute), estimatedSleep: sleepAmount, coffee: Double(coffeeAmount))
+            let sleepTime = wakeUp - prediction.actualSleep
+            
+            let formatter = DateFormatter()
+            formatter.timeStyle = .short
+            
+            alertMessage = formatter.string(from: sleepTime)
+            alertTitle = "Your ideal bedtime is…"
         } catch {
             alertTitle = "Error"
             alertMessage = "Sorry, there was a problem calculating your bedtime."
